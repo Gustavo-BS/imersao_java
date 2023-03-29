@@ -1,5 +1,7 @@
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class App {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
         String s;
         int rating;
         int i;
@@ -26,10 +28,23 @@ public class App {
         List<Map<String, String>> listaDeFilmes = parser.parse(body);
 
 
-        // Exibir e manupular os dados
+        // Exibir e manipular os dados
+        GeradoraDeFigurinhas geradora = new GeradoraDeFigurinhas();
         for (Map<String,String> filme: listaDeFilmes) {
+
+            String urlImage = filme.get("image");
+            String titulo = filme.get("title");
+
+            InputStream inputStream = new URL(urlImage).openStream();
+            String nomeArquivo = titulo + ".png";
+
+
+            geradora.cria(inputStream, nomeArquivo);
+
+
+            System.out.println();
             System.out.println("Título: " + filme.get("title"));
-            System.out.println("Poster: " + filme.get("image"));
+
             s = filme.get("imDbRating");
             ratingFloat = Double.parseDouble(s);
             rating = (int) Math.floor(ratingFloat);
@@ -37,6 +52,9 @@ public class App {
             for(i=0; i<rating ; i++){
                 System.out.printf("⭐");
             }
+
+
+
 
             System.out.println();
             System.out.println();
